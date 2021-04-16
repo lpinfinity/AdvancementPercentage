@@ -32,7 +32,13 @@ public class GetPercentage implements Listener {
 
     //sets up scoreboard
     ScoreboardManager manager = Bukkit.getScoreboardManager();
-    Scoreboard board = manager.getNewScoreboard();
+    Scoreboard board;
+
+    {
+        assert manager != null;
+        board = manager.getNewScoreboard();
+    }
+
     Objective objective = board.registerNewObjective("Advancements", "dummy", "Advancement %");
 
 
@@ -44,8 +50,6 @@ public class GetPercentage implements Listener {
         //increases numberCompleted by one if the advancement has been completed
         if(testAdvancement(key, player)) {
             numberCompleted = numberCompleted + 1;
-        }else if(!testAdvancement(key, player)){
-
         }else{
             return;
         }
@@ -97,11 +101,9 @@ public class GetPercentage implements Listener {
     //tests if given advancement has been completed
     private boolean testAdvancement(NamespacedKey id, Player player) {
         Advancement advancement = Bukkit.getAdvancement(id);
+        assert advancement != null;
         AdvancementProgress progress = player.getAdvancementProgress(advancement);
-        if(progress.isDone()) {
-            return true;
-        }
-        return false;
+        return progress.isDone();
     }
 
     //runs calculatePercentage() when a player earns an advancement
@@ -109,8 +111,6 @@ public class GetPercentage implements Listener {
     public void onPlayerAdvancement(PlayerAdvancementDoneEvent event) {
 
         calculatePercentage(event);
-
-        return;
 
     }
 
@@ -120,7 +120,6 @@ public class GetPercentage implements Listener {
 
         calculatePercentage(event);
 
-        return;
     }
 
 }
