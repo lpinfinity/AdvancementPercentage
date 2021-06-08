@@ -1,8 +1,11 @@
 package dev.terrasmp.advancementpercentage;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdvancementPercentage extends JavaPlugin {
+
+    public FileConfiguration config = getConfig();
 
     //executed when plugin starts
     @Override
