@@ -1,5 +1,11 @@
 name: AdvancementPercentage
-version: Beta 3.1
+version: Beta 4.0
 author: Eli Watkins
 main: dev.terrasmp.advancementpercentage.AdvancementPercentage
 api-version: 1.13
+#commands:
+#  advtop:
+#    description: yes
+
+softdepend:
+  - [PlaceholderAPI]

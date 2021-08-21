@@ -1,10 +1,7 @@
 package dev.terrasmp.advancementpercentage;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
-import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,11 +11,17 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class GetPercentage implements Listener {
+
+    private final AdvancementPercentage advancementPercentage;
+
+    public GetPercentage(AdvancementPercentage advancementPercentage) {
+        this.advancementPercentage = advancementPercentage;
+    }
+
+    List<String> playerdata = new ArrayList<String>();
 
     //stores number of advancements completed for the player
     Integer numberCompleted = 0;
@@ -31,6 +34,9 @@ public class GetPercentage implements Listener {
 
     //stores the calculated percentage
     Integer percentage;
+
+    Integer averageHolder = 0;
+    Integer average = 0;
 
     //sets up scoreboard
     ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -97,6 +103,61 @@ public class GetPercentage implements Listener {
         //sets player score
         score.setScore(percentage);
 
+        if(advancementPercentage.playerData.getConfig().getString(event.getPlayer().getUniqueId().toString()) != null) {
+            advancementPercentage.playerData.getConfig().set(event.getPlayer().getUniqueId().toString(), percentage);
+        } else {
+            advancementPercentage.playerData.getConfig().addDefault(event.getPlayer().getUniqueId().toString(), percentage);
+            advancementPercentage.playerData.getConfig().options().copyDefaults(true);
+        }
+
+        //playerdata.add(event.getPlayer().getUniqueId().toString(), percentage.toString());
+
+        advancementPercentage.playerData.getConfig().getKeys(true);
+
+        for(String string : advancementPercentage.playerData.getConfig().getKeys(true)) {
+            averageHolder = advancementPercentage.playerData.getConfig().getInt(string) + averageHolder;
+        }
+
+        System.out.println(averageHolder);
+        average = averageHolder / advancementPercentage.playerData.getConfig().getKeys(true).size();
+        System.out.println(average);
+
+        advancementPercentage.metrics.addCustomChart(new Metrics.DrilldownPie("average_completion_percentage", () -> {
+            Map<String, Map<String, Integer>> map = new HashMap<>();
+            Map<String, Integer> entry = new HashMap<>();
+            entry.put(average.toString(), 1);
+            if(average <= 10) {
+                map.put("0-10%", entry);
+            }else if(average <= 20) {
+                map.put("11-20%", entry);
+            }else if(average <= 30) {
+                map.put("21-30%", entry);
+            }else if(average <= 40) {
+                map.put("31-40%", entry);
+            }else if(average <= 50) {
+                map.put("41-50%", entry);
+            }else if(average <= 60) {
+                map.put("51-60%", entry);
+            }else if(average <= 70) {
+                map.put("61-70%", entry);
+            }else if(average <= 80) {
+                map.put("71-80%", entry);
+            }else if(average <= 90) {
+                map.put("81-90%", entry);
+            }else if(average <= 100) {
+                map.put("91-100%", entry);
+            }
+
+            return map;
+
+        }));
+
+
+        averageHolder = 0;
+        average = 0;
+
+        advancementPercentage.playerData.saveConfig();
+
         //resets numberCompleted and percentage to zero
         numberCompleted = 0;
         percentage = 0;
@@ -118,6 +179,7 @@ public class GetPercentage implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         calculatePercentage(event);
+
     }
 
 }
