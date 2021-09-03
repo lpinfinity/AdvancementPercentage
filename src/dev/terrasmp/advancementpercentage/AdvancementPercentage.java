@@ -27,7 +27,7 @@ public class AdvancementPercentage extends JavaPlugin {
             System.out.println("PlaceholderAPI is not present, but is not a hard depend, ignoring");
         }
 
-        this.getCommand("advtop").setExecutor(new AdvTopCommand(this));
+        //this.getCommand("advtop").setExecutor(new AdvTopCommand(this));
 
 
 
